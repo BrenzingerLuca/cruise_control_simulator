@@ -5,7 +5,7 @@ A physics-based simulation of a vehicle's cruise control system using a discrete
 ---
 
 ## Simulation Preview
-![Simulation Plot](cruise_control_simulation/data/cruise_control_step_response.png) 
+![Simulation Plot](data/cruise_control_step_response.png) 
 **Figure 1:** Velocity step response (0 to 20 m/s) with tuned parameters ($K_p = 5.0, K_i = 0.1, K_d = 0.5$).
 
 ---
