@@ -1,47 +1,94 @@
-# Project: Simple Cruise Control Algorithm
+# C++ Autonomous Cruise Control Simulator
 
-Idea contributed by Yannis Horstmann (yannis.horstmann@tum.de) and Tobias Wittmann (ge84dik@mytum.de).
+A physics-based simulation of a vehicle's cruise control system using a discrete **PID Controller**. This project implements a simplified dynamic vehicle model to simulate real-world velocity control, demonstrating Modern C++ practices, Object-Oriented Programming (OOP), and numerical integration.
 
-# 2025 Goup 81
+---
 
-Group Members:
-- Luca Brenziger
-- Maximilian Schindler
-- Eduard Barilov
+## Simulation Preview
+![Simulation Plot](cruise_control_simulation/data/cruise_control_step_response.png) 
+**Figure 1:** Velocity step response (0 to 20 m/s) with tuned parameters ($K_p = 5.0, K_i = 0.1, K_d = 0.5$).
 
-## Motivation:
+---
 
-We want to implement a [PID-Controller](https://en.wikipedia.org/wiki/Proportional%E2%80%93integral%E2%80%93derivative_controller) based cruise control algorithm for a simplified car model. Driving resistances such as rolling resistance and aerodynamic drag will be implemented in a simplified model and simulated. A PID-controller will be used to manipulate system behavior and control the car’s velocity to a user-defined value.
+## Features
+- **Dynamic Vehicle Model:** Linearized car dynamics considering mass and velocity-proportional drag.
+- **PID Control Logic:** Discrete implementation of Proportional, Integral, and Derivative terms for precise velocity regulation.
+- **Numerical Integration:** Uses the **Explicit Euler Method** for stable state updates across discrete time steps.
+- **Data Pipeline:** Automatic CSV export for telemetry analysis and external visualization.
+- **Interactive CLI:** Built-in input validation for simulation parameters (starting velocity, target velocity, PID gains).
+- **Built-in Visualization:** Integrated terminal-based preview of the simulation results.
 
-For that we will use [the linearized model described here](https://ctms.engin.umich.edu/CTMS/index.php?example=CruiseControl&section=SimulinkModeling) which assumes that rolling resistance and aerodynamic drag depend linearly on the velocity. This resource also includes material about the PID controller and examples of open-loop and closed-loop behaviour.
+---
 
-To implement this project, basic knowledge about control systems and PID control will be helpful.
+## How It Works
 
-## Sprint 1 (basics)
+### Vehicle Physics
+The acceleration $a$ is computed using a linearized drag model:
+$$a = \frac{F_{engine} - (d \cdot v)}{m}$$
+Where $d$ is the friction coefficient, $v$ the current velocity, and $m$ the vehicle mass.
 
-In this sprint, the system equations and the controller equations are implemented into code. Additionally, to simulate the system behaviour, a simple solver using [Euler Method](https://en.wikipedia.org/wiki/Euler_method) is implemented in this spint. [This resource](https://www.codesansar.com/numerical-methods/eulers-method-using-cpp-output.htm) could help with the implementation of the solver. The user should be able to input initial conditions and the desired velocity. A time series vector of velocity of the car should be returned for possible visualization with external tools.
+### PID Controller
+The controller computes the required engine force ($u$) by evaluating the error ($e = v_{target} - v_{current}$):
+- **P (Proportional):** Immediate reaction to the current error.
+- **I (Integral):** Eliminates steady-state error by accumulating past errors.
+- **D (Derivative):** Dampens the system by predicting future error trends.
 
-### Definition of done:
+### Numerical Solver
+The velocity is updated at each timestep $\Delta t$ using Euler integration:
+$$v_{t+1} = v_t + a \cdot \Delta t$$
 
-- Read Me file and basic documentation
-- Implementation of system equations and PID-controller
-- Simple solver working
-- Output of a timeseries vector of the car's velocity for external visualization (e.g. Matlab)
+---
 
-## Sprint 2 (OOP)
+## Installation & Build
 
-In Sprint 2, the projects components shall be implemented in an object-oriented way. This means implementing classes for the "system" (the car), the "controller" and the "solver". In addition to that, we want to create a built-in visualization method to make the system behavior observable to the user.
+### Prerequisites
+- C++17 or higher
+- CMake (version 3.10+)
+- Python 3 (optional, for plotting)
 
-### Defintion of done:
+### Build Instructions
+```bash
+# Clone the repository
+git clone https://github.com/BrenzingerLuca/cruise_control_simulator.git
+cd cruise_control_simulator/
 
-- Object-oriented implementation of system, controller, and solver  
-- Visualization of velocity of car for depending on initial conditions and control parameters
+# Create build directory
+mkdir build && cd build
 
-## Sprint 3 (performance and/or STL)
+# Configure and build
+cmake ..
+make
 
-The last sprint is about the structure of our code and finding ways to improve it. We and identify the sections of the code that take disproportionately long. Using the methods that we will learn from the lecture, we will try to reduce the runtime as much as possible.
+# Run the simulation
+./cruise_control
+```
 
-### Definition of done:
+## Analysis and Visualization
 
-- Analyze how much time each section of code takes
-- Reduce runtime of slowest code-sections
+After running the simulation, the data is saved in data/my_cruise.csv. You can visualize the results using the provided Python script:
+
+```bash
+python3 plot_csv.py my_cruise.csv
+```
+## Roadmap & Future Improvements
+
+This project is under active development. My goal is to transform this from a basic simulation into a robust control engineering tool. Planned features include:
+
+### Software Architecture & Refactoring
+- [ ] **Encapsulation:** Implementation of a dedicated `Simulation` class to decouple the control loop from the `main` function, improving modularity and testability.
+- [ ] **JSON Configuration:** Moving from manual CLI input to external `.json` configuration files (using `nlohmann/json`) for automated simulation runs.
+- [ ] **Unit Testing:** Integrating **GoogleTest (GTest)** to ensure the reliability of core PID logic and physics calculations.
+
+### Advanced Physics & Control Engineering
+- [ ] **Non-linear Dynamics:** Implementing aerodynamic drag ($v^2$) and rolling resistance for higher fidelity and more realistic vehicle behavior.
+- [ ] **Anti-Windup Logic:** Adding Clamping/Back-calculation to handle actuator saturation (maximum engine force) and prevent integral windup.
+- [ ] **Disturbance Simulation:** Introducing environmental factors like road gradients (uphill/downhill) to test and demonstrate controller robustness.
+- [ ] **Performance Metrics:** Automatic calculation of Overshoot, Settling Time, and Steady-State Error after each run.
+
+
+## Background & Evolution
+
+This project was originally developed as a group assignment at the **Technical University of Munich (TUM)**.
+
+*   **Initial Version (until Feb 2026):** Jointly developed by M. Schindler, E. Barilov, and L. Brenzinger.
+*   **Current Maintainer:** Since the conclusion of the academic course, I have taken full ownership of the codebase. My ongoing work focuses on refactoring the architecture, further enhancing code quality, and implementing the advanced features outlined in the roadmap.
