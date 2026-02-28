@@ -1,4 +1,4 @@
-#include "visualizer.h"
+#include "cruise_control/visualizer.h"
 
 
 void Visualizer::velocity_over_time( const std::vector<double>& v_velocity ) {
