@@ -1,5 +1,4 @@
 #include "cruise_control/visualizer.h"
-#define WITHOUT_NUMPY
 #include "third_party/matplotlibcpp.h"
 #include <vector>
 #include <string>

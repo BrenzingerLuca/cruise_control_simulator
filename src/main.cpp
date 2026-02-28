@@ -1,3 +1,7 @@
+#include <yaml-cpp/yaml.h>
+#include <iostream>
+#include <string>
+
 #include "cruise_control/car.h"
 #include "cruise_control/pid.h"
 #include "cruise_control/csv.h"
@@ -8,27 +12,25 @@
 
 int main() {
 
-    //Initialising the vehicle parameters for the simplified dynamic model
-    const double car_mass{1000.0}; //Mass of the car in kg
-    const double friction_coefficient{50.0}; //N * s/m
-    const double sim_duration{500.0}; //Determines how long the simulation will run in s
-    const double time_step{0.2}; //s
+    // Load the yaml file
+    YAML::Node config = YAML::LoadFile("../config/config.yaml"); 
 
-    double kp = 50.0;
-    double ki = 1.0;
-    double kd = 5.0;
+    // Read the values from the config.yaml
+    const double time_step = config["simulation"]["time_step"].as<double>();
+    const double sim_duration = config["simulation"]["duration"].as<double>();
+    
+    const double car_mass = config["car"]["mass"].as<double>();
+    double friction = config["car"]["friction"].as<double>();
+    
+    const double kp = config["pid"]["p"].as<double>();
+    const double ki = config["pid"]["i"].as<double>();
+    const double kd = config["pid"]["d"].as<double>();
+    
+    const double start_vel = config["initial"]["start_velocity"].as<double>();
+    const double goal_vel = config["initial"]["goal_velocity"].as<double>();
 
-    //Declaring starting and goal velocity. Will later be inputed by the user
-    double starting_velocity{0.0};
-    double goal_velocity{0.0};
-
-    InputValidator inputvalidator;
-    // Get user defined velocities
-    inputvalidator.double_check("Enter starting velocity (m/s) ", starting_velocity);
-    inputvalidator.double_check("Enter goal velocity (m/s) ", goal_velocity);
-
-    Simulation sim(time_step, sim_duration, friction_coefficient, car_mass,
-                   kp, ki, kd, goal_velocity, starting_velocity);
+    // Setup the simulation
+    Simulation sim(time_step, sim_duration, friction, car_mass, kp, ki, kd, goal_vel, start_vel);
    
     // Run the simulation
     sim.run();

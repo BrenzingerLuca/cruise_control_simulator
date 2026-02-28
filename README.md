@@ -4,6 +4,33 @@ A physics-based simulation of a vehicle's cruise control system using a discrete
 
 ---
 
+## Table of Contents
+1. [Project Structure](#-project-structure)
+2. [Simulation Preview](#-simulation-preview)
+3. [Features](#-features)
+4. [How It Works](#-how-it-works)
+5. [Installation & Build](#-installation--build)
+6. [Usage](#-usage)
+7. [Roadmap & Future Improvements](#-roadmap--future-improvements)
+8. [Background & Evolution](#-background--evolution)
+
+---
+## Project Structure
+```text
+.
+├── CMakeLists.txt          # Build system configuration
+├── config.yaml             # External simulation & vehicle parameters
+├── data/                   # Output folder for CSV and PNG plots
+├── include/                # Header files
+│   ├── cruise_control/     # Project core headers (Car, PID, Simulation, etc.)
+│   └── third_party/        # External libraries (matplotlib-cpp)
+├── src/                    # Source files (Implementation)
+│   ├── main.cpp            # Application entry point & orchestration
+│   └── ...                 # Other implementation files
+└── plot_csv.py             # Optional Python script for manual plotting
+```
+---
+
 ## Simulation Preview
 ![Simulation Plot](data/cruise_control_step_response.png) 
 **Figure 1:** Velocity step response (0 to 20 m/s) with tuned parameters ($K_p = 5.0, K_i = 0.1, K_d = 0.5$).
@@ -42,9 +69,17 @@ $$v_{t+1} = v_t + a \cdot \Delta t$$
 ## Installation & Build
 
 ### Prerequisites
-- C++17 or higher
-- CMake (version 3.10+)
-- Python 3 (optional, for plotting)
+- **C++17** or higher
+- CMake (version **3.10+**)
+- **YAML-cpp**: Library for parsing configuration files.
+- Python 3
+- **Python 3 Development Headers**: Required for the C++ plotting component.
+
+### Install dependencies (Ubuntu/WSL)
+```bash
+sudo apt update
+sudo apt install libyaml-cpp-dev python3-dev python3-matplotlib
+```
 
 ### Build Instructions
 ```bash
@@ -56,27 +91,36 @@ cd cruise_control_simulator/
 mkdir build && cd build
 
 # Configure and build
-cmake .
+cmake ..
 make
 
 # Run the simulation
 ./cruise_control
 ```
 
-## Analysis and Visualization
+## Usage
 
-After running the simulation, the data is saved in data/my_cruise.csv. You can visualize the results using the provided Python script:
+1. **Configure**: Edit config.yaml in the root directory to set your desired simulation parameters (mass, PID gains, target velocity).
+2. In the build folder run the following command:
+```bash
+# Run the simulation
+./cruise_control
+```
+3. **Results**:The simulation will save a dataset to **data/my_cruise.csv**, and generate a plot at **data/my_cruise.png**.
+
+Alternatively you can visualize the results using the provided Python script:
 
 ```bash
 python3 plot_csv.py my_cruise.csv
 ```
+
 ## Roadmap & Future Improvements
 
 This project is under active development. My goal is to transform this from a basic simulation into a robust control engineering tool. Planned features include:
 
 ### Software Architecture & Refactoring
-- [ ] **Encapsulation:** Implementation of a dedicated `Simulation` class to decouple the control loop from the `main` function, improving modularity and testability.
-- [ ] **JSON Configuration:** Moving from manual CLI input to external `.json` configuration files (using `nlohmann/json`) for automated simulation runs.
+- [x] **Encapsulation:** Implementation of a dedicated `Simulation` class to decouple the control loop from the `main` function, improving modularity and testability.
+- [x] **YAML Configuration:** Moved from manual CLI input to external configuration files 
 - [ ] **Unit Testing:** Integrating **GoogleTest (GTest)** to ensure the reliability of core PID logic and physics calculations.
 
 ### Advanced Physics & Control Engineering

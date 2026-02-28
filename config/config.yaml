@@ -1,0 +1,20 @@
+# Simulation Settings
+simulation:
+  time_step: 0.2
+  duration: 500.0
+
+# Vehicle Parameters
+car:
+  mass: 1000.0
+  friction: 50.0
+
+# PID Controller Gains
+pid:
+  p: 50.0
+  i: 1.0
+  d: 5.0
+
+# Initial Conditions
+initial:
+  start_velocity: 3.0
+  goal_velocity: 20.0

@@ -16,7 +16,7 @@ add_executable(cruise_control
 )
 
 # Tell the target where the headers are 
-target_include_directories(cruise_control PUBLIC include)
+target_include_directories(cruise_control SYSTEM PUBLIC include)
 
 target_compile_definitions(cruise_control PRIVATE
     PROJECT_ROOT_DIR="${CMAKE_SOURCE_DIR}"
@@ -26,3 +26,7 @@ target_compile_definitions(cruise_control PRIVATE
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 target_link_libraries(cruise_control PRIVATE Python3::Python)
 target_compile_definitions(cruise_control PRIVATE WITHOUT_NUMPY)
+
+# Find YAML needed for config loading 
+find_package(yaml-cpp REQUIRED)
+target_link_libraries(cruise_control PRIVATE yaml-cpp Python3::Python)
