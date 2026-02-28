@@ -8,7 +8,6 @@
 
 int main() {
 
-    CSV csv;
     //Initialising the vehicle parameters for the simplified dynamic model
     const double car_mass{1000.0}; //Mass of the car in kg
     const double friction_coefficient{50.0}; //N * s/m
@@ -37,11 +36,12 @@ int main() {
     // Save the results vector of the simulation 
     const auto & results = sim.get_results();
 
-    // Display the simulation in terminal
+    // Create a plot of the velocitie over time in the data folder
     Visualizer visualizer;
-    visualizer.velocity_over_time(results);
+    visualizer.plot_results(results, time_step, "sim_plot");
     
     //Export simulation data to a CSV file
+    CSV csv;
     csv.write_to_csv(time_step, results, "my_cruise.csv");
 
     return 0;
