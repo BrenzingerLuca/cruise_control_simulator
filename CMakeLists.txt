@@ -21,3 +21,8 @@ target_include_directories(cruise_control PUBLIC include)
 target_compile_definitions(cruise_control PRIVATE
     PROJECT_ROOT_DIR="${CMAKE_SOURCE_DIR}"
 )
+
+# Find python3. Needed for matplotlib
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+target_link_libraries(cruise_control PRIVATE Python3::Python)
+target_compile_definitions(cruise_control PRIVATE WITHOUT_NUMPY)

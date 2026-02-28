@@ -1,51 +1,52 @@
 #include "cruise_control/visualizer.h"
+#define WITHOUT_NUMPY
+#include "third_party/matplotlibcpp.h"
+#include <vector>
+#include <string>
+#include <filesystem>
 
+namespace plt = matplotlibcpp;
 
-void Visualizer::velocity_over_time( const std::vector<double>& v_velocity ) {
+void Visualizer::plot_results(const std::vector<double>& velocities, 
+                              double time_step, 
+                              const std::string& filename) 
+{
+    if (velocities.empty()) return;
 
-
-    std::cout << "Plotting Velocity over Time: " << std::endl;
-    // Get number of values in velocity
-    int n_velocities = v_velocity.size();
-    if (n_velocities == 0) return;
-
-    // Get inverval size
-    int interval = std::max(1, n_velocities / 50);
-
-    // Get new vector that contains of 50 values which show the mean
-    std::vector<double> v_intervals = {};
-
-    // Compute the mean for each interval
-    for (int i = 0; i < n_velocities; i += interval) {
-        double sum = 0;
-        int count = 0;
-        for (int j = i; j < i + interval && j < n_velocities; j++) {
-            sum += v_velocity[j];
-            count++;
-        }
-        v_intervals.push_back(sum / count);
+    // Create the time vector
+    std::vector<double> x(velocities.size());
+    for (size_t i = 0; i < velocities.size(); i++) {
+        x[i] = i * time_step;
     }
 
+    // Prepare figure
+    plt::figure_size(1200, 780);
 
-    // transform into a displayabe discrete format
-    double v_max = *std::max_element(v_intervals.begin(), v_intervals.end());
-    std::vector<int> stars = {};
+    // Plotting the velocity over time in b- = blue
+    plt::plot(x, velocities, "b-"); 
+    
+    // Setting the last value as a reference line to see the steady state value
+    std::vector<double> goal(velocities.size(), velocities.back());
+    plt::plot(x, goal, "r--");
 
-    for (int i = 0; i < v_intervals.size(); i++) {
-        stars.push_back(int((v_intervals[i] / v_max) * 20));
+    // Setting labels. Try Catch is used here because some functionalities dont exist on WSL
+    try {
+        plt::title("Cruise Control Step Response");
+        plt::xlabel("Time [s]");
+        plt::ylabel("Velocity [m/s]");
+        plt::grid(true);
+    } catch (...) {
+        std::cerr << "Warning: Could not set labels, but continuing..." << std::endl;
     }
 
-    for (int level = 20; level > 0; level--) {
-        for (int i = 0; i < stars.size(); i++) {
-            // std::cout << stars[i];
-            if (level == stars[i]) {
-                std::cout << "*";
-            }
-            else {
-                std::cout << " ";
-            }
-        }
-        std::cout << "\n";
-    }
+    // Saving the png in the data folder
+    std::filesystem::path project_root = PROJECT_ROOT_DIR;
+    std::filesystem::path output_path = project_root / "data" / (filename + ".png");
+    std::filesystem::create_directories(project_root / "data");
 
+    std::cout << "Saving plot to: " << output_path << " ..." << std::endl;
+    plt::save(output_path.string());
+    std::cout << "Plot saved!" << std::endl;
+
+    plt::show;
 }

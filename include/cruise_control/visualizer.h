@@ -2,13 +2,14 @@
 #define VISUALIZER_H
 #include <vector>
 #include <string>
-#include <iostream>
-#include <algorithm>
+
 
 
 class Visualizer {
-    public:
-        void velocity_over_time(const std::vector<double>& v_velocity);
+public:
+    void plot_results(const std::vector<double>& velocities,
+                      double time_step,
+                      const std::string& filename);
 };
 
 #endif // VISUALIZER_H
