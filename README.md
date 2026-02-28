@@ -15,7 +15,7 @@ A physics-based simulation of a vehicle's cruise control system using a discrete
 8. [Background & Evolution](#-background--evolution)
 
 ---
-## Project Structure
+## Project Structure<a name="-project-structure"></a>
 ```text
 .
 ├── CMakeLists.txt          # Build system configuration
@@ -31,13 +31,13 @@ A physics-based simulation of a vehicle's cruise control system using a discrete
 ```
 ---
 
-## Simulation Preview
+## Simulation Preview<a name="-simulation-preview"></a>
 ![Simulation Plot](data/cruise_control_step_response.png) 
 **Figure 1:** Velocity step response (0 to 20 m/s) with tuned parameters ($K_p = 5.0, K_i = 0.1, K_d = 0.5$).
 
 ---
 
-## Features
+## Features<a name="-features"></a>
 - **Dynamic Vehicle Model:** Linearized car dynamics considering mass and velocity-proportional drag.
 - **PID Control Logic:** Discrete implementation of Proportional, Integral, and Derivative terms for precise velocity regulation.
 - **Numerical Integration:** Uses the **Explicit Euler Method** for stable state updates across discrete time steps.
@@ -47,7 +47,7 @@ A physics-based simulation of a vehicle's cruise control system using a discrete
 
 ---
 
-## How It Works
+## How It Works<a name="-how-it-works"></a>
 
 ### Vehicle Physics
 The acceleration $a$ is computed using a linearized drag model:
@@ -66,7 +66,7 @@ $$v_{t+1} = v_t + a \cdot \Delta t$$
 
 ---
 
-## Installation & Build
+## Installation & Build<a name="-installation--build"></a>
 
 ### Prerequisites
 - **C++17** or higher
@@ -98,7 +98,7 @@ make
 ./cruise_control
 ```
 
-## Usage
+## Usage<a name="-usage"></a>
 
 1. **Configure**: Edit config.yaml in the root directory to set your desired simulation parameters (mass, PID gains, target velocity).
 2. In the build folder run the following command:
@@ -114,7 +114,7 @@ Alternatively you can visualize the results using the provided Python script:
 python3 plot_csv.py my_cruise.csv
 ```
 
-## Roadmap & Future Improvements
+## Roadmap & Future Improvements<a name="-roadmap--future-improvements"></a>
 
 This project is under active development. My goal is to transform this from a basic simulation into a robust control engineering tool. Planned features include:
 
@@ -130,7 +130,7 @@ This project is under active development. My goal is to transform this from a ba
 - [ ] **Performance Metrics:** Automatic calculation of Overshoot, Settling Time, and Steady-State Error after each run.
 
 
-## Background & Evolution
+## Background & Evolution<a name="-background--evolution"></a>
 
 This project was originally developed as a group assignment at the **Technical University of Munich (TUM)**.
 
