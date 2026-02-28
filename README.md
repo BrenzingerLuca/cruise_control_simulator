@@ -56,7 +56,7 @@ cd cruise_control_simulator/
 mkdir build && cd build
 
 # Configure and build
-cmake ..
+cmake .
 make
 
 # Run the simulation

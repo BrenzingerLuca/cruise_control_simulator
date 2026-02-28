@@ -1,3 +1,0 @@
-/home/lucab/AdvProg/BonusProject/81/cruise-control/build/CMakeFiles/cruise_control.dir
-/home/lucab/AdvProg/BonusProject/81/cruise-control/build/CMakeFiles/edit_cache.dir
-/home/lucab/AdvProg/BonusProject/81/cruise-control/build/CMakeFiles/rebuild_cache.dir

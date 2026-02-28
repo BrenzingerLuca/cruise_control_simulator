@@ -1,7 +1,7 @@
-#include "input_validator.h"
+#include "cruise_control/input_validator.h"
 
 // check if the input is legit
-bool InputValidator::double_check( const std::string& prompt, double& value ) {
+bool InputValidator::double_check(const std::string& prompt, double& value ) {
 
         while (true) {
 
