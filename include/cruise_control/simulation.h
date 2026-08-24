@@ -17,8 +17,10 @@ class Simulation{
 
     public:
         Simulation(double time_step, double sim_duration,
-                   double friction_coefficient, double m_car, 
-                   double k_p, double k_i, double k_d,
+                   double friction_coefficient, double m_car,
+                   double aero_drag_coefficient, double rolling_resistance_coefficient,
+                   double road_grade_percent,
+                   double k_p, double k_i, double k_d, double max_engine_force,
                    double goal_velocity, double start_velocity);
 
         void run();
