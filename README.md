@@ -39,8 +39,9 @@ A physics-based simulation of a vehicle's cruise control system using a discrete
 ---
 
 ## Features<a name="-features"></a>
-- **Dynamic Vehicle Model:** Linearized car dynamics considering mass and velocity-proportional drag.
+- **Non-linear Vehicle Model:** Linear friction, quadratic aerodynamic drag, rolling resistance, and a constant road grade (uphill/downhill) all act on the vehicle simultaneously.
 - **PID Control Logic:** Discrete implementation of Proportional, Integral, and Derivative terms for precise velocity regulation.
+- **Actuator Saturation & Anti-Windup:** Engine force is clamped to a configurable maximum, with conditional-integration anti-windup to prevent integral runaway while saturated.
 - **Numerical Integration:** Uses the **Explicit Euler Method** for stable state updates across discrete time steps.
 - **Data Pipeline:** Automatic CSV export for telemetry analysis and external visualization.
 - **Interactive CLI:** Built-in input validation for simulation parameters (starting velocity, target velocity, PID gains).
@@ -51,15 +52,17 @@ A physics-based simulation of a vehicle's cruise control system using a discrete
 ## How It Works<a name="-how-it-works"></a>
 
 ### Vehicle Physics
-The acceleration $a$ is computed using a linearized drag model:
-$$a = \frac{F_{engine} - (d \cdot v)}{m}$$
-Where $d$ is the friction coefficient, $v$ the current velocity, and $m$ the vehicle mass.
+The acceleration $a$ is computed from the engine force minus all resisting forces:
+$$a = \frac{F_{engine} - (d \cdot v) - (c_d \cdot v \cdot |v|) - (c_{rr} \cdot m \cdot g \cdot \text{sign}(v)) - (m \cdot g \cdot \sin\theta)}{m}$$
+Where $d$ is the linear friction coefficient, $c_d$ the aerodynamic drag coefficient, $c_{rr}$ the rolling resistance coefficient, $\theta$ the road grade angle (derived from `road_grade_percent`), $v$ the current velocity, $m$ the vehicle mass, and $g$ gravity. Aerodynamic drag and rolling resistance always oppose the direction of travel, while the grade term acts as a constant disturbance (resisting uphill, assisting downhill).
 
 ### PID Controller
 The controller computes the required engine force ($u$) by evaluating the error ($e = v_{target} - v_{current}$):
 - **P (Proportional):** Immediate reaction to the current error.
 - **I (Integral):** Eliminates steady-state error by accumulating past errors.
 - **D (Derivative):** Dampens the system by predicting future error trends.
+
+The raw PID output is clamped to `max_engine_force`, modeling a real actuator's saturation limit. To prevent the integral term from winding up while saturated, the controller uses **conditional-integration anti-windup**: the integral is only updated when the output is not saturated, or when doing so would pull the output back out of saturation.
 
 ### Numerical Solver
 The velocity is updated at each timestep $\Delta t$ using Euler integration:
@@ -101,7 +104,7 @@ make
 
 ## Usage<a name="-usage"></a>
 
-1. **Configure**: Edit config.yaml in the root directory to set your desired simulation parameters (mass, PID gains, target velocity).
+1. **Configure**: Edit config.yaml in the root directory to set your desired simulation parameters (mass, drag/resistance coefficients, road grade, PID gains, actuator limit, target velocity).
 2. In the build folder run the following command:
 ```bash
 # Run the simulation
@@ -118,9 +121,9 @@ python3 plot_csv.py my_cruise.csv
 To ensure the mathematical correctness of the PID controller and the physical fidelity of the vehicle model, this project uses **GoogleTest (GTest)** for automated unit and integration testing.
 
 ### Test Coverage:
-- **PID Logic:** Verification of P, I, and D components, including error accumulation and steady-state behavior.
-- **Vehicle Physics:** Validation of Newton's second law, friction-based deceleration, and terminal velocity equilibrium.
-- **Integration Tests:** Full simulation runs verifying that the closed-loop system converges to the target velocity from different initial states (acceleration, deceleration, and zero-state).
+- **PID Logic:** Verification of P, I, and D components, actuator saturation clamping, and anti-windup behavior, including error accumulation and steady-state behavior.
+- **Vehicle Physics:** Validation of Newton's second law, friction-based deceleration, terminal velocity equilibrium, aerodynamic drag, rolling resistance, and road grade effects.
+- **Integration Tests:** Full simulation runs verifying that the closed-loop system converges to the target velocity from different initial states (acceleration, deceleration, zero-state), with non-linear dynamics enabled, under a sustained uphill disturbance, and with a saturated actuator.
 
 ### Running the Tests:
 From the `build` directory, execute the test runner:
@@ -138,9 +141,9 @@ This project is under active development. My goal is to transform this from a ba
 - [x] **Unit Testing:** Integrating **GoogleTest (GTest)** to ensure the reliability of core PID logic and physics calculations.
 
 ### Advanced Physics & Control Engineering
-- [ ] **Non-linear Dynamics:** Implementing aerodynamic drag ($v^2$) and rolling resistance for higher fidelity and more realistic vehicle behavior.
-- [ ] **Anti-Windup Logic:** Adding Clamping/Back-calculation to handle actuator saturation (maximum engine force) and prevent integral windup.
-- [ ] **Disturbance Simulation:** Introducing environmental factors like road gradients (uphill/downhill) to test and demonstrate controller robustness.
+- [x] **Non-linear Dynamics:** Implementing aerodynamic drag ($v^2$) and rolling resistance for higher fidelity and more realistic vehicle behavior.
+- [x] **Anti-Windup Logic:** Adding clamping and conditional-integration to handle actuator saturation (maximum engine force) and prevent integral windup.
+- [x] **Disturbance Simulation:** Introducing environmental factors like road gradients (uphill/downhill) to test and demonstrate controller robustness.
 - [ ] **Performance Metrics:** Automatic calculation of Overshoot, Settling Time, and Steady-State Error after each run.
 
 

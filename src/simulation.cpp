@@ -2,13 +2,16 @@
 #include "cruise_control/car.h"
 #include "cruise_control/pid.h"
 
-Simulation::Simulation(double time_step, double sim_duration, 
-                   double friction_coefficient, double m_car, 
-                   double k_p, double k_i, double k_d,
+Simulation::Simulation(double time_step, double sim_duration,
+                   double friction_coefficient, double m_car,
+                   double aero_drag_coefficient, double rolling_resistance_coefficient,
+                   double road_grade_percent,
+                   double k_p, double k_i, double k_d, double max_engine_force,
                    double goal_velocity, double start_velocity)
 
-     : _car{m_car, friction_coefficient}, 
-       _controller{k_p, k_i, k_d}, 
+     : _car{m_car, friction_coefficient, aero_drag_coefficient,
+            rolling_resistance_coefficient, road_grade_percent},
+       _controller{k_p, k_i, k_d, max_engine_force},
        _time_step{time_step},
        _sim_duration{sim_duration},
        _goal_velocity{goal_velocity},

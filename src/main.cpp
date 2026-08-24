@@ -20,16 +20,22 @@ int main() {
     
     const double car_mass = config["car"]["mass"].as<double>();
     double friction = config["car"]["friction"].as<double>();
-    
+    const double aero_drag_coefficient = config["car"]["aero_drag_coefficient"].as<double>();
+    const double rolling_resistance_coefficient = config["car"]["rolling_resistance_coefficient"].as<double>();
+    const double road_grade_percent = config["car"]["road_grade_percent"].as<double>();
+
     const double kp = config["pid"]["p"].as<double>();
     const double ki = config["pid"]["i"].as<double>();
     const double kd = config["pid"]["d"].as<double>();
-    
+    const double max_engine_force = config["pid"]["max_engine_force"].as<double>();
+
     const double start_vel = config["initial"]["start_velocity"].as<double>();
     const double goal_vel = config["initial"]["goal_velocity"].as<double>();
 
     // Setup the simulation
-    Simulation sim(time_step, sim_duration, friction, car_mass, kp, ki, kd, goal_vel, start_vel);
+    Simulation sim(time_step, sim_duration, friction, car_mass,
+                    aero_drag_coefficient, rolling_resistance_coefficient, road_grade_percent,
+                    kp, ki, kd, max_engine_force, goal_vel, start_vel);
    
     // Run the simulation
     sim.run();
