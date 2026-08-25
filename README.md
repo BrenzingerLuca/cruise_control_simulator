@@ -46,6 +46,7 @@ A physics-based simulation of a vehicle's cruise control system using a discrete
 - **Data Pipeline:** Automatic CSV export for telemetry analysis and external visualization.
 - **Interactive CLI:** Built-in input validation for simulation parameters (starting velocity, target velocity, PID gains).
 - **Built-in Visualization:** Integrated terminal-based preview of the simulation results.
+- **Performance Metrics:** Automatic calculation of Overshoot, Settling Time, and Steady-State Error, printed to the console after each run.
 
 ---
 
@@ -67,6 +68,12 @@ The raw PID output is clamped to `max_engine_force`, modeling a real actuator's 
 ### Numerical Solver
 The velocity is updated at each timestep $\Delta t$ using Euler integration:
 $$v_{t+1} = v_t + a \cdot \Delta t$$
+
+### Performance Metrics
+After each run, the `Metrics` class evaluates the recorded velocity trace against the goal velocity:
+- **Overshoot:** The largest excursion above the goal, as a percentage of the goal velocity.
+- **Settling Time:** The time after which the response stays within a ±2% tolerance band around the goal for the remainder of the run.
+- **Steady-State Error:** The absolute difference between the final velocity and the goal velocity.
 
 ---
 
@@ -124,6 +131,7 @@ To ensure the mathematical correctness of the PID controller and the physical fi
 - **PID Logic:** Verification of P, I, and D components, actuator saturation clamping, and anti-windup behavior, including error accumulation and steady-state behavior.
 - **Vehicle Physics:** Validation of Newton's second law, friction-based deceleration, terminal velocity equilibrium, aerodynamic drag, rolling resistance, and road grade effects.
 - **Integration Tests:** Full simulation runs verifying that the closed-loop system converges to the target velocity from different initial states (acceleration, deceleration, zero-state), with non-linear dynamics enabled, under a sustained uphill disturbance, and with a saturated actuator.
+- **Performance Metrics:** Verification of overshoot, settling time, and steady-state error calculations on both synthetic velocity traces and a realistic simulation run.
 
 ### Running the Tests:
 From the `build` directory, execute the test runner:
@@ -144,7 +152,7 @@ This project is under active development. My goal is to transform this from a ba
 - [x] **Non-linear Dynamics:** Implementing aerodynamic drag ($v^2$) and rolling resistance for higher fidelity and more realistic vehicle behavior.
 - [x] **Anti-Windup Logic:** Adding clamping and conditional-integration to handle actuator saturation (maximum engine force) and prevent integral windup.
 - [x] **Disturbance Simulation:** Introducing environmental factors like road gradients (uphill/downhill) to test and demonstrate controller robustness.
-- [ ] **Performance Metrics:** Automatic calculation of Overshoot, Settling Time, and Steady-State Error after each run.
+- [x] **Performance Metrics:** Automatic calculation of Overshoot, Settling Time, and Steady-State Error after each run.
 
 
 ## Background & Evolution<a name="-background--evolution"></a>

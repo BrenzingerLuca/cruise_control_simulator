@@ -20,11 +20,12 @@ find_package(yaml-cpp REQUIRED)
 # Encapsulate core logic into a static library to facilitate unit testing 
 # and modularity. This library excludes the application entry point (main.cpp).
 add_library(cruise_lib STATIC
-    src/car.cpp 
-    src/pid.cpp 
-    src/csv.cpp 
+    src/car.cpp
+    src/pid.cpp
+    src/csv.cpp
     src/visualizer.cpp
     src/simulation.cpp
+    src/metrics.cpp
 )
 
 # Define include directories and propagate them to all dependent targets.
@@ -63,7 +64,7 @@ FetchContent_MakeAvailable(googletest)
 
 # Define the unit test runner and link against the core library and gtest_main.
 # 'gtest_main' provides a default main() function for the test suite.
-add_executable(run_unit_tests tests/pid_test.cpp tests/car_test.cpp tests/simulation_test.cpp) 
+add_executable(run_unit_tests tests/pid_test.cpp tests/car_test.cpp tests/simulation_test.cpp tests/metrics_test.cpp)
 target_link_libraries(run_unit_tests PRIVATE 
     cruise_lib 
     gtest_main
