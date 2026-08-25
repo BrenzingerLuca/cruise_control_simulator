@@ -7,6 +7,7 @@
 #include "cruise_control/csv.h"
 #include "cruise_control/visualizer.h"
 #include "cruise_control/simulation.h"
+#include "cruise_control/metrics.h"
 
 
 int main() {
@@ -50,6 +51,15 @@ int main() {
     //Export simulation data to a CSV file
     CSV csv;
     csv.write_to_csv(time_step, results, "my_cruise.csv");
+
+    // Evaluate and print step-response performance metrics
+    Metrics metrics;
+    PerformanceMetrics performance = metrics.evaluate(results, goal_vel, time_step);
+
+    std::cout << "Performance Metrics:" << std::endl;
+    std::cout << "  Overshoot: " << performance.overshoot_percent << " %" << std::endl;
+    std::cout << "  Settling Time: " << performance.settling_time << " s" << std::endl;
+    std::cout << "  Steady-State Error: " << performance.steady_state_error << " m/s" << std::endl;
 
     return 0;
 }
